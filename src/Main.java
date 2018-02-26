@@ -1,3 +1,6 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -72,7 +75,11 @@ public class Main {
 
         // Generates a map that contains all of the options for passwords based on each password subsequence
         Map<String, ArrayList<String>> passwordCycleMap = generatePasswordCycleMap(3, passwordList);
-        System.out.println("\nPassword Cycle Map: " + passwordCycleMap);
+        //System.out.println("\nPassword Cycle Map: " + passwordCycleMap);
+
+        // Returns whether or not the file was created
+        System.out.println("Was the File Created?: " + addPasswordCycleToFile("password.txt",
+                passwordCycleMap, "mon"));
 
 
 
@@ -93,7 +100,6 @@ public class Main {
     public static ArrayList<String> generateSubSequenceList(int num, ArrayList<String> passwordList) {
         ArrayList<String> subSequenceList = new ArrayList<String>();
         String strOfPasswords = concatenateListIntoString(passwordList);
-        StringBuilder str = new StringBuilder();
         for (int i = 0; i < strOfPasswords.length() - num; i++) {
             CharSequence subSequence = strOfPasswords.subSequence(i, i + num);
             subSequenceList.add(subSequence.toString());
@@ -102,10 +108,11 @@ public class Main {
     }
 
 
+
     public static Map<String, ArrayList<String>> generatePasswordCycleMap(int num, ArrayList<String> passwordList) {
         Map<String, ArrayList<String>> passwordCycleMap = new HashMap<String, ArrayList<String>>();
         ArrayList<String> subSequenceList = generateSubSequenceList(num, passwordList);
-        // for each element in the list, split each string and place it in an arraylist
+        // for each element in the list, split each string and place it in an arrayList
         // place that list as a value in the map, with the key being the element
         for (String subSequence : subSequenceList) {
             ArrayList<String> separatedSubSequenceList = new ArrayList<String>();
@@ -117,10 +124,39 @@ public class Main {
         }
         return passwordCycleMap;
     }
-    /*
 
+
+
+
+    public static ArrayList<String> passwordCycle(Map<String, ArrayList<String>> passwordCycleMap, String subSequence) {
+        return passwordCycleMap.get(subSequence);
+
+    }
+
+    // write the subsequence to a file
+    public static boolean addPasswordCycleToFile(String fileName, Map<String, ArrayList<String>> passwordCycleMap,
+                                              String subSequence) {
+        // Create the new file
+        try {
+            PrintWriter writer = new PrintWriter(fileName);
+            ArrayList<String> passwordCycle = passwordCycle(passwordCycleMap, subSequence);
+            for (String password : passwordCycle) {
+                writer.print(password + " ");
+            }
+            writer.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        // Get the list of passwords
+        // Add to the file
+        return new File(fileName).isFile();
+    }
+
+
+/*
     public static void whatsTheNextPassword(Map<String, ArrayList<String>> passwordCycleMap) {
-        //if current password is in a value of the map and it's index is not size - 1, return the next elememt
+        //if current password is in a value of the map and it's index is not size - 1, return the next element
         Scanner scan = new Scanner(System.in);
         System.out.print("What's your current password?: ");
         String currentPassword = scan.next();
@@ -138,4 +174,5 @@ public class Main {
         //return nextPassword;
     }
     */
+
 }
